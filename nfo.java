@@ -23,7 +23,7 @@ public class nfo {
         plot = doc.getElementsByTagName("plot").item(0).getFirstChild().getNodeValue();
 		title = doc.getElementsByTagName("title").item(0).getFirstChild().getNodeValue();
 		
-		level = "R-18";
+		level = "18";
 		date = doc.getElementsByTagName("premiered").item(0).getFirstChild().getNodeValue();
 
         NodeList nl = doc.getElementsByTagName("genre");
