@@ -13,18 +13,85 @@ import org.xml.sax.SAXException;
 public class nfo {
 	
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
+		File directory = new File("");
+		visitAllDirsAndFiles(new File(directory.getCanonicalPath()));
 
-        File f = new File(args[0]);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();//步骤1
-        DocumentBuilder builder = factory.newDocumentBuilder();//步骤2
-        Document doc = builder.parse(f);//步骤3
+	}
+	
+    public static void visitAllDirsAndFiles(File dir) {
+        File f = dir;
+        String[] childrens = f.list();
+        //System.out.println(childrens.length);
+		for(int j = 0; j < childrens.length; j++) {
+			//System.out.println(childrens[j].toString());
+			File afile = new File(f, childrens[j]);
+			if(afile.isFile()) {
+				if(childrens[j].toString().substring(1+childrens[j].toString().lastIndexOf(".")).equals("mp4")) {
+					//afile.renameTo(new File(f,childrens[j].substring(0, afile.getName().lastIndexOf("."))+".mp4"));
+					File vsmeta = new File(f, childrens[j].toString()+".vsmeta");
+					if(!vsmeta.exists()) {
+						System.out.println(childrens[j]);
+						File nfo = new File(f, childrens[j].toString().substring(0,childrens[j].toString().lastIndexOf("."))+".nfo");
+						System.out.println(nfo);
+						if(nfo.exists()) {
+							try {
+								action(nfo,vsmeta);
+								
+								
+							} catch (ParserConfigurationException | SAXException | IOException | NullPointerException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						
+						}
+					
+					
+					}
+					if(!destposter.exists()) {
+						try {
+							copyFileUsingStream(poster,destposter);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+				}
+				
+			} else if (afile.isDirectory()) {
+				visitAllDirsAndFiles(afile);
+				
+			}
+		}
+	
+	public static void action(File nfo,File target) throws ParserConfigurationException, SAXException, IOException, NullPointerException {
+
+        File f = nfo;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(f);
         
-		String title,plot,level,date;
-        plot = doc.getElementsByTagName("plot").item(0).getFirstChild().getNodeValue();
+		String title,plot,level,date,rate;
+	    try {
+	        plot = doc.getElementsByTagName("plot").item(0).getFirstChild().getNodeValue();
+	    	
+	    }catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+	    	plot = "";
+		}
+
 		title = doc.getElementsByTagName("title").item(0).getFirstChild().getNodeValue();
 		
-		level = "18";
+		level = "R-18";
 		date = doc.getElementsByTagName("premiered").item(0).getFirstChild().getNodeValue();
+
+	    try {
+			rate = doc.getElementsByTagName("rating").item(0).getFirstChild().getNodeValue();
+	    	
+	    }catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			rate = "0";
+		}
 
         NodeList nl = doc.getElementsByTagName("genre");
         String[] cla = new String[nl.getLength()];
@@ -41,7 +108,7 @@ public class nfo {
         for (int i = 0; i < nl.getLength(); i++) {
             direc[i] = doc.getElementsByTagName("director").item(i).getFirstChild().getNodeValue();
         }
-		OutputStream output = new FileOutputStream(f.getParent()+"\\"+f.getName().substring(0, f.getName().lastIndexOf("."))+".mp4.vsmeta");
+		OutputStream output = new FileOutputStream(target.getPath());
 	    output.write(8);
 	    output.write(1);
 	    output.write(18);
@@ -119,8 +186,9 @@ public class nfo {
 		output.write("Z".getBytes("UTF-8"));
 		output.write(SumStrAscii(level));
 		output.write(level.getBytes("UTF-8"));
-		output.write(35);//评级
-		output.write(48);
+		output.write(96);//评级
+		
+		output.write((int)(Double.parseDouble(rate)*10));
 		output.flush(); // 把缓存区内容压入文件
 	    output.close();
 	
