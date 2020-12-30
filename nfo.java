@@ -84,8 +84,16 @@ public class nfo {
 
 		title = doc.getElementsByTagName("title").item(0).getFirstChild().getNodeValue();
 		
-		level = "R-18";
-		date = doc.getElementsByTagName("premiered").item(0).getFirstChild().getNodeValue();
+		level = "9+";
+		
+
+	    try {
+			date = doc.getElementsByTagName("premiered").item(0).getFirstChild().getNodeValue();
+	    	
+	    }catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+	    	date = "2014-03-24";
+		}
 
 	    try {
 			rate = doc.getElementsByTagName("rating").item(0).getFirstChild().getNodeValue();
