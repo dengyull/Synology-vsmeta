@@ -36,8 +36,6 @@ public class nfo {
 						if(nfo.exists()) {
 							try {
 								action(nfo,vsmeta);
-								
-								
 							} catch (ParserConfigurationException | SAXException | IOException | NullPointerException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -47,19 +45,23 @@ public class nfo {
 					
 					
 					}
-					if(!destposter.exists()) {
-						try {
-							copyFileUsingStream(poster,destposter);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
 					
 				}
+				/*
+				File destposter =  new File(f, "poster.jpg");
+				File poster = new File(f, childrens[j].toString().substring(0,childrens[j].toString().lastIndexOf("."))+"-poster.jpg");
+				if(destposter.exists()) {
+					try {
+						copyFileUsingStream(destposter,poster);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}*/
 				
 			} else if (afile.isDirectory()) {
 				visitAllDirsAndFiles(afile);
+			}
 				
 			}
 		}
@@ -211,4 +213,27 @@ public class nfo {
 		}
 		return sum;
 	}
+    
+    public static void copyFileUsingStream(File source, File dest) throws IOException {
+    	    InputStream is = null;
+    	    OutputStream os = null;
+    	    try {
+    	        is = new FileInputStream(source);
+    	        os = new FileOutputStream(dest);
+    	        byte[] buffer = new byte[1024];
+    	        int length;
+    	        while ((length = is.read(buffer)) > 0) {
+    	            os.write(buffer, 0, length);
+    	        }
+    	    } finally {
+    	        if(is != null) {
+    	            is.close();
+    	        }
+    	        if(os != null) {
+    	            os.close();
+    	        }
+    	    }
+    }
+    
+    
 }
